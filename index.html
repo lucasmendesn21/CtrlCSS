@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<!-- 
+  CtrlCSS — Gerador Visual de Estilos CSS
+  Desenvolvido para o projeto acadêmico do 1º semestre de ADS
+  Estética: Grafite urbano com acessibilidade para daltônicos e mobile
+-->
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Garante que o viewport se ajuste a dispositivos móveis -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Descrição para motores de busca -->
+  <meta name="description" content="CtrlCSS — Gerador visual de estilos CSS com estética grafite urbano." />
+  <title>CtrlCSS — Gerador de Estilos</title>
+
+  <!-- Google Fonts: Bebas Neue para títulos impactantes, Space Grotesk para corpo, JetBrains Mono para código -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+
+  <!-- Folha de estilos externa -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============================================
+       FILTROS SVG PARA ACESSIBILIDADE DALTÔNICA
+       Filtro de simulação de protanopia (mais comum).
+       Invisível, referenciado via CSS filter: url(#...).
+  ============================================= -->
+  <svg class="svg-filters" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <filter id="colorblind-filter">
+        <!-- Matriz de transformação de cor para protanopia -->
+        <!-- Valores baseados no modelo de Machado et al. 2009 -->
+        <feColorMatrix type="matrix" values="
+          0.567 0.433 0     0 0
+          0.558 0.442 0     0 0
+          0     0.242 0.758 0 0
+          0     0     0     1 0
+        "/>
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- ============================================
+       BARRA DE NAVEGAÇÃO
+  ============================================= -->
+  <nav class="navbar" role="navigation" aria-label="Navegação principal">
+    <!-- Logo com link para o topo -->
+    <a href="#top" class="logo" aria-label="CtrlCSS - Ir para o início">CtrlCSS</a>
+
+    <!-- Links para cada seção -->
+    <ul class="nav-links" role="list" id="nav-links">
+      <li><a href="#gen-box">Box</a></li>
+      <li><a href="#gen-text">Texto</a></li>
+      <li><a href="#gen-gradient">Gradiente</a></li>
+      <li><a href="#gen-animation">Animação</a></li>
+      <li><a href="#gen-shadow">Sombra</a></li>
+      <li><a href="#gen-transform">Transform</a></li>
+      <li><a href="#gen-filter">Filtros</a></li>
+      <li><a href="#gen-vars">Variáveis</a></li>
+      <li><a href="#palette">Paleta</a></li>
+      <li><a href="#extractor">Extrair Cores</a></li>
+    </ul>
+
+    <!-- Botão de alternância para modo daltônico -->
+    <button class="cb-toggle" id="cb-toggle-btn"
+      onclick="toggleColorblind()"
+      aria-pressed="false"
+      title="Alternar modo para daltônico (protanopia)">
+      👁 Daltônico
+    </button>
+
+    <!-- Botão hambúrguer: visível apenas em telas estreitas.
+         Controla a exibição da lista de links (.nav-links). -->
+    <button class="nav-toggle" id="nav-toggle-btn"
+      onclick="toggleMobileMenu()"
+      aria-expanded="false"
+      aria-controls="nav-links"
+      aria-label="Abrir menu de navegação">
+      ☰
+    </button>
+  </nav>
+
+  <!-- ============================================
+       SEÇÃO HERO
+  ============================================= -->
+  <section class="hero" id="top" aria-label="Apresentação do CtrlCSS">
+    <!-- Título principal -->
+    <h1 class="hero-title">
+      <span>Ctrl</span>CSS
+    </h1>
+    <!-- Subtítulo descritivo -->
+    <p class="hero-sub">
+      Gere. Copie. Cole. - Crie estilos CSS visuais em tempo real, sem precisar memorizar sintaxe. Para devs de todos os níveis.
+    </p>
+    <!-- Botões de ação -->
+    <div class="hero-btns">
+      <a href="#gen-box" class="btn-primary">🎨 Começar a criar</a>
+    </div>
+  </section>
+
+  <!-- ============================================
+       1. GERADOR DE BOX
+       Controla: border-radius, padding, width,
+       background color, border e opacity.
+  ============================================= -->
+  <section class="section" id="gen-box" aria-labelledby="box-title">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">// 01 — box model</span>
+        <h2 class="section-title" id="box-title">Gerador de <span class="hl">Box</span></h2>
+        <p class="section-desc">Modele a estrutura e aparência de qualquer elemento com bordas, padding, cores e opacidade.</p>
+      </div>
+
+      <div class="gen-card">
+        <div class="card-header">
+          <span class="icon">📦</span>
+          <span class="card-name">box-model.css</span>
+        </div>
+        <div class="card-body">
+          <!-- Painel de controles do Box -->
+          <div class="controls-panel">
+
+            <!-- Controle: border-radius -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="box-radius">
+                border-radius
+                <!-- Ícone de ajuda: explica a propriedade no hover/foco -->
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Arredonda os cantos do elemento. Quanto maior o valor, mais "circular" fica a borda.</span>
+                </span>
+                <span class="ctrl-value" id="box-radius-val">12px</span>
+              </label>
+              <input class="ctrl-range" type="range" id="box-radius"
+                min="0" max="80" value="12"
+                oninput="updateBox()"
+                aria-label="Arredondamento das bordas em pixels" />
+            </div>
+
+            <!-- Controle: padding -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="box-padding">
+                padding
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Espaço interno entre o conteúdo do elemento e sua borda. Aumenta o "respiro" visual.</span>
+                </span>
+                <span class="ctrl-value" id="box-padding-val">24px</span>
+              </label>
+              <input class="ctrl-range" type="range" id="box-padding"
+                min="0" max="80" value="24"
+                oninput="updateBox()"
+                aria-label="Espaçamento interno em pixels" />
+            </div>
+
+            <!-- Controle: largura -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="box-width">
+                width
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Define a largura fixa do elemento, em pixels.</span>
+                </span>
+                <span class="ctrl-value" id="box-width-val">200px</span>
+              </label>
+              <input class="ctrl-range" type="range" id="box-width"
+                min="60" max="340" value="200"
+                oninput="updateBox()"
+                aria-label="Largura do elemento em pixels" />
+            </div>
+
+            <!-- Controle: cor de fundo -->
+            <div class="ctrl-row">
+              <div class="ctrl-group">
+                <label class="ctrl-label" for="box-bg">
+                  background
+                  <span class="help-icon" tabindex="0">?
+                    <span class="tooltip-text">Cor de fundo (preenchimento) do elemento.</span>
+                  </span>
+                </label>
+                <input class="ctrl-color" type="color" id="box-bg"
+                  value="#FF3CAC"
+                  oninput="updateBox()"
+                  aria-label="Cor de fundo" />
+              </div>
+              <!-- Controle: cor da borda -->
+              <div class="ctrl-group">
+                <label class="ctrl-label" for="box-border-color">
+                  border color
+                  <span class="help-icon" tabindex="0">?
+                    <span class="tooltip-text">Cor da linha de borda ao redor do elemento.</span>
+                  </span>
+                </label>
+                <input class="ctrl-color" type="color" id="box-border-color"
+                  value="#00F5FF"
+                  oninput="updateBox()"
+                  aria-label="Cor da borda" />
+              </div>
+            </div>
+
+            <!-- Controle: espessura da borda -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="box-border-width">
+                border-width
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Espessura (grossura) da linha de borda, em pixels.</span>
+                </span>
+                <span class="ctrl-value" id="box-border-width-val">2px</span>
+              </label>
+              <input class="ctrl-range" type="range" id="box-border-width"
+                min="0" max="20" value="2"
+                oninput="updateBox()"
+                aria-label="Espessura da borda" />
+            </div>
+
+            <!-- Controle: estilo da borda -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="box-border-style">
+                border-style
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Define o traçado da borda: contínua (solid), tracejada (dashed), pontilhada (dotted), entre outras.</span>
+                </span>
+              </label>
+              <select class="ctrl-select" id="box-border-style"
+                onchange="updateBox()"
+                aria-label="Estilo da linha de borda">
+                <option value="solid">solid</option>
+                <option value="dashed">dashed</option>
+                <option value="dotted">dotted</option>
+                <option value="double">double</option>
+                <option value="groove">groove</option>
+                <option value="ridge">ridge</option>
+                <option value="none">none</option>
+              </select>
+            </div>
+
+            <!-- Controle: opacidade -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="box-opacity">
+                opacity
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Transparência geral do elemento: 0 é totalmente invisível e 1 é totalmente opaco.</span>
+                </span>
+                <span class="ctrl-value" id="box-opacity-val">1</span>
+              </label>
+              <input class="ctrl-range" type="range" id="box-opacity"
+                min="0" max="1" step="0.05" value="1"
+                oninput="updateBox()"
+                aria-label="Opacidade do elemento de 0 a 1" />
+            </div>
+
+          </div><!-- /controls-panel -->
+
+          <!-- Painel de preview do Box -->
+          <div class="preview-panel">
+            <div class="preview-box" aria-label="Pré-visualização do box gerado">
+              <!-- Elemento que recebe os estilos gerados -->
+              <div class="preview-target" id="box-preview"
+                style="background:#FF3CAC; border-radius:12px; padding:24px; width:200px; border:2px solid #00F5FF; opacity:1;"
+                aria-hidden="true">
+                <span style="font-family:var(--font-display);font-size:1.2rem;letter-spacing:2px;color:white;">CSS BOX</span>
+              </div>
+            </div>
+
+            <!-- Código CSS gerado -->
+            <div class="code-block">
+              <div class="code-header">
+                <span class="code-label">CSS Gerado</span>
+                <button class="btn-copy" onclick="copyCode('box-code')"
+                  aria-label="Copiar código CSS do box">Copiar</button>
+              </div>
+              <div class="code-output" id="box-code" role="region" aria-live="polite" aria-label="Código CSS resultante"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       2. GERADOR DE TEXTO
+       Controla: font-size, weight, line-height,
+       letter-spacing, font-family e text-align.
+  ============================================= -->
+  <section class="section" id="gen-text" aria-labelledby="text-title" style="background:rgba(255,255,255,0.02);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">// 02 — tipografia</span>
+        <h2 class="section-title" id="text-title">Gerador de <span class="hl">Texto</span></h2>
+        <p class="section-desc">Configure cada aspecto tipográfico e veja o resultado ao vivo.</p>
+      </div>
+
+      <div class="gen-card">
+        <div class="card-header">
+          <span class="icon">✍️</span>
+          <span class="card-name">typography.css</span>
+        </div>
+        <div class="card-body">
+          <div class="controls-panel">
+
+            <!-- Controle: tamanho da fonte -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="txt-size">
+                font-size
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Tamanho do texto, em pixels.</span>
+                </span>
+                <span class="ctrl-value" id="txt-size-val">24px</span>
+              </label>
+              <input class="ctrl-range" type="range" id="txt-size"
+                min="10" max="72" value="24"
+                oninput="updateText()" />
+            </div>
+
+            <!-- Controle: peso da fonte -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="txt-weight">
+                font-weight
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Espessura (peso) da fonte: 100 é muito fino e 900 é muito negrito.</span>
+                </span>
+                <span class="ctrl-value" id="txt-weight-val">400</span>
+              </label>
+              <input class="ctrl-range" type="range" id="txt-weight"
+                min="100" max="900" step="100" value="400"
+                oninput="updateText()" />
+            </div>
+
+            <!-- Controle: altura de linha -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="txt-lh">
+                line-height
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Espaço vertical entre as linhas do texto. Valores maiores deixam o texto mais "respirado".</span>
+                </span>
+                <span class="ctrl-value" id="txt-lh-val">1.6</span>
+              </label>
+              <input class="ctrl-range" type="range" id="txt-lh"
+                min="0.8" max="3" step="0.1" value="1.6"
+                oninput="updateText()" />
+            </div>
+
+            <!-- Controle: espaçamento entre letras -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="txt-ls">
+                letter-spacing
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Espaço horizontal entre as letras do texto. Valores negativos aproximam as letras.</span>
+                </span>
+                <span class="ctrl-value" id="txt-ls-val">0px</span>
+              </label>
+              <input class="ctrl-range" type="range" id="txt-ls"
+                min="-5" max="20" step="0.5" value="0"
+                oninput="updateText()" />
+            </div>
+
+            <!-- Controle: família tipográfica -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="txt-family">
+                font-family
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Família/tipo de fonte usada no texto (ex: serifada, sem serifa, monoespaçada).</span>
+                </span>
+              </label>
+              <select class="ctrl-select" id="txt-family" onchange="updateText()">
+                <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
+                <option value="'Bebas Neue', sans-serif">Bebas Neue</option>
+                <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
+                <option value="Georgia, serif">Georgia (serif)</option>
+                <option value="Arial, sans-serif">Arial</option>
+                <option value="'Courier New', monospace">Courier New</option>
+                <option value="Impact, sans-serif">Impact</option>
+              </select>
+            </div>
+
+            <!-- Controle: alinhamento -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="txt-align">
+                text-align
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Alinhamento horizontal do texto dentro do seu espaço: esquerda, centro, direita ou justificado.</span>
+                </span>
+              </label>
+              <select class="ctrl-select" id="txt-align" onchange="updateText()">
+                <option value="left">left</option>
+                <option value="center">center</option>
+                <option value="right">right</option>
+                <option value="justify">justify</option>
+              </select>
+            </div>
+
+            <!-- Cor do texto -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="txt-color">
+                color
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Cor do texto.</span>
+                </span>
+              </label>
+              <input class="ctrl-color" type="color" id="txt-color"
+                value="#F0F0F0" oninput="updateText()" />
+            </div>
+
+          </div>
+
+          <!-- Preview de texto -->
+          <div class="preview-panel">
+            <div class="preview-box" style="min-height:200px; align-items:flex-start; padding:20px;">
+              <p class="preview-target" id="text-preview"
+                style="font-size:24px; font-weight:400; line-height:1.6; letter-spacing:0px; font-family:'Space Grotesk', sans-serif; text-align:left; color:#F0F0F0; max-width:100%;"
+                aria-label="Prévia do texto estilizado">
+                O grafite é a poesia<br>dos muros esquecidos.
+              </p>
+            </div>
+            <div class="code-block">
+              <div class="code-header">
+                <span class="code-label">CSS Gerado</span>
+                <button class="btn-copy" onclick="copyCode('text-code')" aria-label="Copiar CSS de texto">Copiar</button>
+              </div>
+              <div class="code-output" id="text-code" role="region" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       3. GERADOR DE GRADIENTE
+       Controla: tipo (linear/radial), ângulo,
+       paradas de cor e terceira cor opcional.
+  ============================================= -->
+  <section class="section" id="gen-gradient" aria-labelledby="gradient-title">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">// 03 — gradientes</span>
+        <h2 class="section-title" id="gradient-title">Gerador de <span class="hl">Gradiente</span></h2>
+        <p class="section-desc">Crie gradientes lineares ou radiais com múltiplas paradas de cor.</p>
+      </div>
+
+      <div class="gen-card">
+        <div class="card-header">
+          <span class="icon">🌈</span>
+          <span class="card-name">gradient.css</span>
+        </div>
+        <div class="card-body">
+          <div class="controls-panel">
+
+            <!-- Tipo do gradiente -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="grad-type">
+                tipo
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Linear segue uma direção/ângulo, radial parte de um centro circular e conic gira como um relógio.</span>
+                </span>
+              </label>
+              <select class="ctrl-select" id="grad-type" onchange="updateGradient()">
+                <option value="linear">linear-gradient</option>
+                <option value="radial">radial-gradient</option>
+                <option value="conic">conic-gradient</option>
+              </select>
+            </div>
+
+            <!-- Ângulo (apenas para linear e conic) -->
+            <div class="ctrl-group" id="grad-angle-group">
+              <label class="ctrl-label" for="grad-angle">
+                ângulo
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Direção do gradiente em graus. 0deg aponta para cima, 90deg para a direita, 180deg para baixo.</span>
+                </span>
+                <span class="ctrl-value" id="grad-angle-val">135deg</span>
+              </label>
+              <input class="ctrl-range" type="range" id="grad-angle"
+                min="0" max="360" value="135"
+                oninput="updateGradient()" />
+            </div>
+
+            <!-- Cores do gradiente -->
+            <div class="ctrl-row">
+              <div class="ctrl-group">
+                <label class="ctrl-label" for="grad-c1">
+                  cor 1
+                  <span class="help-icon" tabindex="0">?
+                    <span class="tooltip-text">Primeira cor do gradiente.</span>
+                  </span>
+                </label>
+                <input class="ctrl-color" type="color" id="grad-c1"
+                  value="#FF3CAC" oninput="updateGradient()" />
+              </div>
+              <div class="ctrl-group">
+                <label class="ctrl-label" for="grad-c2">
+                  cor 2
+                  <span class="help-icon" tabindex="0">?
+                    <span class="tooltip-text">Segunda cor do gradiente.</span>
+                  </span>
+                </label>
+                <input class="ctrl-color" type="color" id="grad-c2"
+                  value="#00F5FF" oninput="updateGradient()" />
+              </div>
+            </div>
+
+            <!-- Parada da cor 1 -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="grad-stop1">
+                parada cor 1
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Posição (em %) onde a cor 1 começa a se transformar na próxima cor.</span>
+                </span>
+                <span class="ctrl-value" id="grad-stop1-val">0%</span>
+              </label>
+              <input class="ctrl-range" type="range" id="grad-stop1"
+                min="0" max="100" value="0"
+                oninput="updateGradient()" />
+            </div>
+
+            <!-- Parada da cor 2 -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="grad-stop2">
+                parada cor 2
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Posição (em %) onde a cor 2 termina de se formar.</span>
+                </span>
+                <span class="ctrl-value" id="grad-stop2-val">100%</span>
+              </label>
+              <input class="ctrl-range" type="range" id="grad-stop2"
+                min="0" max="100" value="100"
+                oninput="updateGradient()" />
+            </div>
+
+            <!-- Terceira cor opcional -->
+            <label class="ctrl-checkbox">
+              <input type="checkbox" id="grad-use-c3" onchange="updateGradient()" aria-label="Ativar terceira cor" />
+              Usar 3ª cor
+              <span class="help-icon" tabindex="0">?
+                <span class="tooltip-text">Adiciona uma cor intermediária entre a cor 1 e a cor 2, criando uma transição com 3 tons.</span>
+              </span>
+            </label>
+
+            <!-- Grupo da terceira cor: aparece só quando marcado -->
+            <div id="grad-c3-group" style="display:none;">
+              <div class="ctrl-row">
+                <div class="ctrl-group">
+                  <label class="ctrl-label" for="grad-c3">
+                    cor 3
+                    <span class="help-icon" tabindex="0">?
+                      <span class="tooltip-text">Cor intermediária adicional do gradiente.</span>
+                    </span>
+                  </label>
+                  <input class="ctrl-color" type="color" id="grad-c3"
+                    value="#FFE600" oninput="updateGradient()" />
+                </div>
+                <div class="ctrl-group">
+                  <label class="ctrl-label" for="grad-stop3">
+                    parada
+                    <span class="help-icon" tabindex="0">?
+                      <span class="tooltip-text">Posição (em %) onde a cor 3 fica no meio da transição.</span>
+                    </span>
+                    <span class="ctrl-value" id="grad-stop3-val">50%</span>
+                  </label>
+                  <input class="ctrl-range" type="range" id="grad-stop3"
+                    min="0" max="100" value="50"
+                    oninput="updateGradient()" />
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Preview do gradiente -->
+          <div class="preview-panel">
+            <div class="preview-box" style="min-height:200px;">
+              <div id="gradient-preview"
+                style="width:100%; height:200px; border-radius:8px; background: linear-gradient(135deg, #FF3CAC 0%, #00F5FF 100%);"
+                aria-label="Prévia do gradiente gerado" role="img">
+              </div>
+            </div>
+            <div class="code-block">
+              <div class="code-header">
+                <span class="code-label">CSS Gerado</span>
+                <button class="btn-copy" onclick="copyCode('gradient-code')" aria-label="Copiar CSS do gradiente">Copiar</button>
+              </div>
+              <div class="code-output" id="gradient-code" role="region" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       4. GERADOR DE ANIMAÇÃO
+       Animações: pulse, bounce, spin, shake, fadeIn.
+       Customiza duração e timing-function.
+  ============================================= -->
+  <section class="section" id="gen-animation" aria-labelledby="animation-title" style="background:rgba(255,255,255,0.02);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">// 04 — animações</span>
+        <h2 class="section-title" id="animation-title">Gerador de <span class="hl">Animação</span></h2>
+        <p class="section-desc">Aplique animações CSS clássicas com duração e timing customizáveis.</p>
+      </div>
+
+      <div class="gen-card">
+        <div class="card-header">
+          <span class="icon">🎬</span>
+          <span class="card-name">animation.css</span>
+        </div>
+        <div class="card-body">
+          <div class="controls-panel">
+
+            <!-- Tipo de animação -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="anim-type">
+                animation-name
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Qual animação pré-definida será aplicada ao elemento.</span>
+                </span>
+              </label>
+              <select class="ctrl-select" id="anim-type" onchange="updateAnimation()">
+                <option value="pulse">pulse – pulsação</option>
+                <option value="bounce">bounce – quique</option>
+                <option value="spin">spin – rotação</option>
+                <option value="shake">shake – tremor</option>
+                <option value="fadeIn">fadeIn – aparecimento</option>
+              </select>
+            </div>
+
+            <!-- Duração da animação -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="anim-duration">
+                duration
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Tempo (em segundos) que a animação leva para completar um ciclo.</span>
+                </span>
+                <span class="ctrl-value" id="anim-duration-val">1s</span>
+              </label>
+              <input class="ctrl-range" type="range" id="anim-duration"
+                min="0.2" max="5" step="0.1" value="1"
+                oninput="updateAnimation()" />
+            </div>
+
+            <!-- Timing function -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="anim-timing">
+                timing-function
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Curva de aceleração da animação: como a velocidade varia do início ao fim.</span>
+                </span>
+              </label>
+              <select class="ctrl-select" id="anim-timing" onchange="updateAnimation()">
+                <option value="ease">ease</option>
+                <option value="linear">linear</option>
+                <option value="ease-in">ease-in</option>
+                <option value="ease-out">ease-out</option>
+                <option value="ease-in-out">ease-in-out</option>
+                <option value="cubic-bezier(0.68,-0.55,0.265,1.55)">elastic</option>
+              </select>
+            </div>
+
+            <!-- Delay da animação -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="anim-delay">
+                delay
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Tempo de espera (em segundos) antes da animação começar.</span>
+                </span>
+                <span class="ctrl-value" id="anim-delay-val">0s</span>
+              </label>
+              <input class="ctrl-range" type="range" id="anim-delay"
+                min="0" max="3" step="0.1" value="0"
+                oninput="updateAnimation()" />
+            </div>
+
+            <!-- Contagem de iterações -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="anim-count">
+                iteration-count
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Quantas vezes a animação se repete. "infinite" repete para sempre.</span>
+                </span>
+              </label>
+              <select class="ctrl-select" id="anim-count" onchange="updateAnimation()">
+                <option value="infinite">infinite (infinito)</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+              </select>
+            </div>
+
+            <!-- Botão para reiniciar a animação no preview -->
+            <button class="btn-primary" onclick="replayAnimation()"
+              style="width:100%; justify-content:center;">
+              ▶ Reproduzir novamente
+            </button>
+
+          </div>
+
+          <!-- Preview da animação -->
+          <div class="preview-panel">
+            <div class="preview-box" style="min-height:200px;">
+              <!-- Elemento que terá a animação aplicada -->
+              <div id="anim-target"
+                style="width:80px; height:80px; background:linear-gradient(135deg,#FF3CAC,#00F5FF); border-radius:12px; display:flex; align-items:center; justify-content:center; animation: pulse 1s ease infinite;"
+                aria-hidden="true">
+                <span style="font-family:var(--font-display); color:white; font-size:1rem; letter-spacing:1px;">CSS</span>
+              </div>
+            </div>
+            <div class="code-block">
+              <div class="code-header">
+                <span class="code-label">CSS Gerado</span>
+                <button class="btn-copy" onclick="copyCode('animation-code')" aria-label="Copiar CSS de animação">Copiar</button>
+              </div>
+              <div class="code-output" id="animation-code" role="region" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       5. GERADOR DE SOMBRA
+       box-shadow e text-shadow com offset X/Y,
+       blur, spread e cor com opacidade.
+  ============================================= -->
+  <section class="section" id="gen-shadow" aria-labelledby="shadow-title">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">// 05 — sombras</span>
+        <h2 class="section-title" id="shadow-title">Gerador de <span class="hl">Sombra</span></h2>
+        <p class="section-desc">Configure box-shadow e text-shadow com controle total de offset, blur, spread e cor.</p>
+      </div>
+
+      <div class="gen-card">
+        <div class="card-header">
+          <span class="icon">🌑</span>
+          <span class="card-name">shadow.css</span>
+        </div>
+
+        <!-- Abas para alternar entre box-shadow e text-shadow -->
+        <div style="padding: 16px 24px 0;">
+          <div class="tabs" role="tablist" aria-label="Tipo de sombra">
+            <button class="tab-btn active" role="tab" aria-selected="true"
+              onclick="switchShadowTab('box')" id="tab-box-shadow">box-shadow</button>
+            <button class="tab-btn" role="tab" aria-selected="false"
+              onclick="switchShadowTab('text')" id="tab-text-shadow">text-shadow</button>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="controls-panel">
+
+            <!-- Offset X -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="shadow-x">
+                offset-x
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Deslocamento horizontal da sombra. Valores positivos vão para a direita, negativos para a esquerda.</span>
+                </span>
+                <span class="ctrl-value" id="shadow-x-val">4px</span>
+              </label>
+              <input class="ctrl-range" type="range" id="shadow-x"
+                min="-50" max="50" value="4"
+                oninput="updateShadow()" />
+            </div>
+
+            <!-- Offset Y -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="shadow-y">
+                offset-y
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Deslocamento vertical da sombra. Valores positivos vão para baixo, negativos para cima.</span>
+                </span>
+                <span class="ctrl-value" id="shadow-y-val">4px</span>
+              </label>
+              <input class="ctrl-range" type="range" id="shadow-y"
+                min="-50" max="50" value="4"
+                oninput="updateShadow()" />
+            </div>
+
+            <!-- Blur radius -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="shadow-blur">
+                blur-radius
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Quanto a sombra fica desfocada. Zero é uma sombra com borda dura; valores altos a tornam suave.</span>
+                </span>
+                <span class="ctrl-value" id="shadow-blur-val">12px</span>
+              </label>
+              <input class="ctrl-range" type="range" id="shadow-blur"
+                min="0" max="80" value="12"
+                oninput="updateShadow()" />
+            </div>
+
+            <!-- Spread (apenas para box-shadow) -->
+            <div class="ctrl-group" id="shadow-spread-group">
+              <label class="ctrl-label" for="shadow-spread">
+                spread-radius
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Expande (valores positivos) ou encolhe (valores negativos) o tamanho da sombra.</span>
+                </span>
+                <span class="ctrl-value" id="shadow-spread-val">0px</span>
+              </label>
+              <input class="ctrl-range" type="range" id="shadow-spread"
+                min="-20" max="40" value="0"
+                oninput="updateShadow()" />
+            </div>
+
+            <!-- Cor da sombra -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="shadow-color">
+                cor
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Cor base da sombra.</span>
+                </span>
+              </label>
+              <input class="ctrl-color" type="color" id="shadow-color"
+                value="#FF3CAC" oninput="updateShadow()" />
+            </div>
+
+            <!-- Opacidade da sombra -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="shadow-opacity">
+                opacidade
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Transparência da sombra: 0 é invisível e 1 é totalmente sólida.</span>
+                </span>
+                <span class="ctrl-value" id="shadow-opacity-val">0.6</span>
+              </label>
+              <input class="ctrl-range" type="range" id="shadow-opacity"
+                min="0" max="1" step="0.05" value="0.6"
+                oninput="updateShadow()" />
+            </div>
+
+            <!-- Sombra interna (inset) – só para box-shadow -->
+            <label class="ctrl-checkbox" id="shadow-inset-label">
+              <input type="checkbox" id="shadow-inset" onchange="updateShadow()"
+                aria-label="Ativar sombra interna (inset)" />
+              inset (sombra interna)
+              <span class="help-icon" tabindex="0">?
+                <span class="tooltip-text">Faz a sombra aparecer "dentro" do elemento, como um recorte, em vez de projetada para fora.</span>
+              </span>
+            </label>
+
+          </div>
+
+          <!-- Preview da sombra -->
+          <div class="preview-panel">
+            <div class="preview-box" style="min-height:200px;">
+              <!-- Elemento que mostra box-shadow -->
+              <div id="shadow-box-preview"
+                style="width:120px; height:80px; background:#161622; border-radius:12px; display:flex; align-items:center; justify-content:center; box-shadow: 4px 4px 12px 0px rgba(255,60,172,0.6);"
+                aria-hidden="true">
+                <span style="font-family:var(--font-display); color:#F0F0F0; font-size:1rem; letter-spacing:2px;">BOX</span>
+              </div>
+              <!-- Elemento que mostra text-shadow (oculto inicialmente) -->
+              <p id="shadow-text-preview"
+                style="display:none; font-family:var(--font-display); font-size:3rem; letter-spacing:4px; color:#F0F0F0; text-shadow: 4px 4px 12px rgba(255,60,172,0.6);"
+                aria-label="Prévia do text-shadow">
+                TEXTO
+              </p>
+            </div>
+            <div class="code-block">
+              <div class="code-header">
+                <span class="code-label">CSS Gerado</span>
+                <button class="btn-copy" onclick="copyCode('shadow-code')" aria-label="Copiar CSS de sombra">Copiar</button>
+              </div>
+              <div class="code-output" id="shadow-code" role="region" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       6. GERADOR DE TRANSFORM
+       Controla: rotate, scale, skewX/Y, translateX/Y.
+  ============================================= -->
+  <section class="section" id="gen-transform" aria-labelledby="transform-title" style="background:rgba(255,255,255,0.02);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">// 06 — transform</span>
+        <h2 class="section-title" id="transform-title">Gerador de <span class="hl">Transform</span></h2>
+        <p class="section-desc">Rotacione, escalone, incline e mova elementos com CSS transform.</p>
+      </div>
+
+      <div class="gen-card">
+        <div class="card-header">
+          <span class="icon">🔄</span>
+          <span class="card-name">transform.css</span>
+        </div>
+        <div class="card-body">
+          <div class="controls-panel">
+
+            <!-- Rotação -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="tf-rotate">
+                rotate
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Gira o elemento em torno do seu centro, em graus.</span>
+                </span>
+                <span class="ctrl-value" id="tf-rotate-val">0deg</span>
+              </label>
+              <input class="ctrl-range" type="range" id="tf-rotate"
+                min="-180" max="180" value="0"
+                oninput="updateTransform()" />
+            </div>
+
+            <!-- Escala -->
+            <div class="ctrl-row">
+              <div class="ctrl-group">
+                <label class="ctrl-label" for="tf-scalex">
+                  scaleX
+                  <span class="help-icon" tabindex="0">?
+                    <span class="tooltip-text">Multiplica a largura do elemento. 1 é o tamanho original, 2 dobra a largura.</span>
+                  </span>
+                  <span class="ctrl-value" id="tf-scalex-val">1</span>
+                </label>
+                <input class="ctrl-range" type="range" id="tf-scalex"
+                  min="0.1" max="3" step="0.05" value="1"
+                  oninput="updateTransform()" />
+              </div>
+              <div class="ctrl-group">
+                <label class="ctrl-label" for="tf-scaley">
+                  scaleY
+                  <span class="help-icon" tabindex="0">?
+                    <span class="tooltip-text">Multiplica a altura do elemento. 1 é o tamanho original, 2 dobra a altura.</span>
+                  </span>
+                  <span class="ctrl-value" id="tf-scaley-val">1</span>
+                </label>
+                <input class="ctrl-range" type="range" id="tf-scaley"
+                  min="0.1" max="3" step="0.05" value="1"
+                  oninput="updateTransform()" />
+              </div>
+            </div>
+
+            <!-- Inclinação -->
+            <div class="ctrl-row">
+              <div class="ctrl-group">
+                <label class="ctrl-label" for="tf-skewx">
+                  skewX
+                  <span class="help-icon" tabindex="0">?
+                    <span class="tooltip-text">Inclina o elemento horizontalmente, distorcendo os lados verticais em diagonal.</span>
+                  </span>
+                  <span class="ctrl-value" id="tf-skewx-val">0deg</span>
+                </label>
+                <input class="ctrl-range" type="range" id="tf-skewx"
+                  min="-45" max="45" value="0"
+                  oninput="updateTransform()" />
+              </div>
+              <div class="ctrl-group">
+                <label class="ctrl-label" for="tf-skewy">
+                  skewY
+                  <span class="help-icon" tabindex="0">?
+                    <span class="tooltip-text">Inclina o elemento verticalmente, distorcendo os lados horizontais em diagonal.</span>
+                  </span>
+                  <span class="ctrl-value" id="tf-skewy-val">0deg</span>
+                </label>
+                <input class="ctrl-range" type="range" id="tf-skewy"
+                  min="-45" max="45" value="0"
+                  oninput="updateTransform()" />
+              </div>
+            </div>
+
+            <!-- Translação -->
+            <div class="ctrl-row">
+              <div class="ctrl-group">
+                <label class="ctrl-label" for="tf-tx">
+                  translateX
+                  <span class="help-icon" tabindex="0">?
+                    <span class="tooltip-text">Move o elemento horizontalmente, em pixels, sem afetar o fluxo do layout.</span>
+                  </span>
+                  <span class="ctrl-value" id="tf-tx-val">0px</span>
+                </label>
+                <input class="ctrl-range" type="range" id="tf-tx"
+                  min="-100" max="100" value="0"
+                  oninput="updateTransform()" />
+              </div>
+              <div class="ctrl-group">
+                <label class="ctrl-label" for="tf-ty">
+                  translateY
+                  <span class="help-icon" tabindex="0">?
+                    <span class="tooltip-text">Move o elemento verticalmente, em pixels, sem afetar o fluxo do layout.</span>
+                  </span>
+                  <span class="ctrl-value" id="tf-ty-val">0px</span>
+                </label>
+                <input class="ctrl-range" type="range" id="tf-ty"
+                  min="-100" max="100" value="0"
+                  oninput="updateTransform()" />
+              </div>
+            </div>
+
+            <!-- Botão de reset dos transformes -->
+            <button class="btn-ghost" onclick="resetTransform()"
+              style="width:100%; justify-content:center; font-size:0.85rem;">
+              ↺ Resetar Transform
+            </button>
+
+          </div>
+
+          <!-- Preview do transform -->
+          <div class="preview-panel">
+            <div class="preview-box" style="min-height:200px;">
+              <div class="transform-preview-inner" id="transform-preview"
+                aria-label="Prévia do transform CSS" role="img">
+                CSS
+              </div>
+            </div>
+            <div class="code-block">
+              <div class="code-header">
+                <span class="code-label">CSS Gerado</span>
+                <button class="btn-copy" onclick="copyCode('transform-code')" aria-label="Copiar CSS de transform">Copiar</button>
+              </div>
+              <div class="code-output" id="transform-code" role="region" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       7. GERADOR DE FILTROS CSS
+       filter: blur, brightness, contrast,
+       grayscale, hue-rotate, saturate, sepia.
+  ============================================= -->
+  <section class="section" id="gen-filter" aria-labelledby="filter-title">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">// 07 — css filters</span>
+        <h2 class="section-title" id="filter-title">Gerador de <span class="hl">Filtros</span></h2>
+        <p class="section-desc">Aplique filtros visuais como blur, brilho, contraste, escala de cinza e mais.</p>
+      </div>
+
+      <div class="gen-card">
+        <div class="card-header">
+          <span class="icon">🔬</span>
+          <span class="card-name">filter.css</span>
+        </div>
+        <div class="card-body">
+          <div class="controls-panel">
+
+            <!-- Filtro: desfoque -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="f-blur">
+                blur
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Desfoca o elemento, em pixels. Quanto maior, mais borrado.</span>
+                </span>
+                <span class="ctrl-value" id="f-blur-val">0px</span>
+              </label>
+              <input class="ctrl-range" type="range" id="f-blur"
+                min="0" max="20" step="0.5" value="0"
+                oninput="updateFilter()" />
+            </div>
+
+            <!-- Filtro: brilho -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="f-brightness">
+                brightness
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Brilho do elemento. 100% é o original, valores menores escurecem e maiores clareiam.</span>
+                </span>
+                <span class="ctrl-value" id="f-brightness-val">100%</span>
+              </label>
+              <input class="ctrl-range" type="range" id="f-brightness"
+                min="0" max="200" value="100"
+                oninput="updateFilter()" />
+            </div>
+
+            <!-- Filtro: contraste -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="f-contrast">
+                contrast
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Diferença entre tons claros e escuros. 100% é o original, valores maiores aumentam o contraste.</span>
+                </span>
+                <span class="ctrl-value" id="f-contrast-val">100%</span>
+              </label>
+              <input class="ctrl-range" type="range" id="f-contrast"
+                min="0" max="200" value="100"
+                oninput="updateFilter()" />
+            </div>
+
+            <!-- Filtro: escala de cinza -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="f-grayscale">
+                grayscale
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Converte as cores para tons de cinza. 0% mantém as cores originais, 100% é preto e branco total.</span>
+                </span>
+                <span class="ctrl-value" id="f-grayscale-val">0%</span>
+              </label>
+              <input class="ctrl-range" type="range" id="f-grayscale"
+                min="0" max="100" value="0"
+                oninput="updateFilter()" />
+            </div>
+
+            <!-- Filtro: rotação de matiz -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="f-huerotate">
+                hue-rotate
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Gira todas as cores do elemento ao redor do círculo cromático, em graus.</span>
+                </span>
+                <span class="ctrl-value" id="f-huerotate-val">0deg</span>
+              </label>
+              <input class="ctrl-range" type="range" id="f-huerotate"
+                min="0" max="360" value="0"
+                oninput="updateFilter()" />
+            </div>
+
+            <!-- Filtro: saturação -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="f-saturate">
+                saturate
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Intensidade das cores. 100% é o original, 0% remove a cor (cinza) e valores altos tornam as cores mais vivas.</span>
+                </span>
+                <span class="ctrl-value" id="f-saturate-val">100%</span>
+              </label>
+              <input class="ctrl-range" type="range" id="f-saturate"
+                min="0" max="300" value="100"
+                oninput="updateFilter()" />
+            </div>
+
+            <!-- Filtro: sépia -->
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="f-sepia">
+                sepia
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Aplica um tom amarronzado de fotografia antiga. 0% é original, 100% é sépia completo.</span>
+                </span>
+                <span class="ctrl-value" id="f-sepia-val">0%</span>
+              </label>
+              <input class="ctrl-range" type="range" id="f-sepia"
+                min="0" max="100" value="0"
+                oninput="updateFilter()" />
+            </div>
+
+          </div>
+
+          <!-- Preview dos filtros -->
+          <div class="preview-panel">
+            <div class="preview-box" style="min-height:200px;">
+              <!-- Imagem placeholder que recebe os filtros -->
+              <div class="filter-preview-img" id="filter-preview"
+                style="transition:filter 0.3s ease;"
+                role="img" aria-label="Elemento para visualização de filtros CSS">
+              </div>
+            </div>
+            <div class="code-block">
+              <div class="code-header">
+                <span class="code-label">CSS Gerado</span>
+                <button class="btn-copy" onclick="copyCode('filter-code')" aria-label="Copiar CSS de filtro">Copiar</button>
+              </div>
+              <div class="code-output" id="filter-code" role="region" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       8. GERADOR DE VARIÁVEIS CSS
+       Cria um bloco :root com custom properties
+       baseadas em uma cor principal escolhida.
+  ============================================= -->
+  <section class="section" id="gen-vars" aria-labelledby="vars-title" style="background:rgba(255,255,255,0.02);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">// 08 — custom properties</span>
+        <h2 class="section-title" id="vars-title">Gerador de <span class="hl">Variáveis CSS</span></h2>
+        <p class="section-desc">Gere um sistema de tokens CSS customizados pronto para usar no seu projeto.</p>
+      </div>
+
+      <div class="gen-card">
+        <div class="card-header">
+          <span class="icon">🔧</span>
+          <span class="card-name">:root variables</span>
+        </div>
+        <div style="padding: 24px; display:flex; flex-direction:column; gap:20px;">
+
+          <!-- Seleção de cor primária -->
+          <div class="ctrl-row" style="align-items:end;">
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="vars-primary">
+                cor primária
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Cor base a partir da qual todas as variações de tons (claros e escuros) serão geradas.</span>
+                </span>
+              </label>
+              <input class="ctrl-color" type="color" id="vars-primary"
+                value="#FF3CAC" oninput="updateVars()"
+                aria-label="Selecione a cor primária do projeto" />
+            </div>
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="vars-prefix">
+                prefixo
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Texto usado no início do nome de cada variável CSS gerada (ex: --prefixo-100).</span>
+                </span>
+              </label>
+              <input class="ctrl-input" type="text" id="vars-prefix"
+                value="color" oninput="updateVars()"
+                maxlength="20"
+                aria-label="Prefixo para os nomes das variáveis" />
+            </div>
+          </div>
+
+          <!-- Bloco de código das variáveis geradas -->
+          <div class="vars-output" id="vars-output" role="region" aria-live="polite" aria-label="Código de variáveis CSS gerado"></div>
+
+          <!-- Botão copiar -->
+          <button class="btn-copy" style="align-self:flex-end; padding:8px 20px; font-size:0.8rem;"
+            onclick="copyVars()" aria-label="Copiar variáveis CSS">
+            Copiar variáveis
+          </button>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       9. PALETA DE CORES
+       O usuário escolhe uma cor principal e o sistema
+       gera sugestões de cores complementares/análogas.
+  ============================================= -->
+  <section class="section" id="palette" aria-labelledby="palette-title">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">// 09 — paleta</span>
+        <h2 class="section-title" id="palette-title">Sugestão de <span class="hl">Paleta</span></h2>
+        <p class="section-desc">Escolha uma cor principal e receba sugestões complementares, análogas, triádicas e monocromáticas.</p>
+      </div>
+
+      <div class="gen-card">
+        <div class="card-header">
+          <span class="icon">🎨</span>
+          <span class="card-name">color-palette.css</span>
+        </div>
+        <div style="padding:24px; display:flex; flex-direction:column; gap:24px;">
+
+          <!-- Seletor de cor principal -->
+          <div class="ctrl-row" style="align-items:end; max-width:400px;">
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="palette-primary">
+                cor principal
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Cor de referência usada para calcular as demais cores da paleta.</span>
+                </span>
+              </label>
+              <input class="ctrl-color" type="color" id="palette-primary"
+                value="#FF3CAC"
+                oninput="updatePalette()"
+                aria-label="Selecione a cor principal para gerar a paleta" />
+            </div>
+            <div class="ctrl-group">
+              <label class="ctrl-label" for="palette-harmony">
+                harmonia
+                <span class="help-icon" tabindex="0">?
+                  <span class="tooltip-text">Regra usada para escolher as outras cores: complementar (opostas), análoga (vizinhas), triádica (3 cores equidistantes), entre outras.</span>
+                </span>
+              </label>
+              <select class="ctrl-select" id="palette-harmony" onchange="updatePalette()">
+                <option value="complementary">Complementar</option>
+                <option value="analogous">Análoga</option>
+                <option value="triadic">Triádica</option>
+                <option value="split">Split-complementar</option>
+                <option value="monochromatic">Monocromática</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Grid onde as cores da paleta são renderizadas -->
+          <div class="palette-grid" id="palette-grid" aria-label="Paleta de cores gerada" role="list"></div>
+
+          <!-- Código CSS das variáveis da paleta -->
+          <div class="code-block">
+            <div class="code-header">
+              <span class="code-label">Variáveis CSS</span>
+              <button class="btn-copy" onclick="copyCode('palette-code')" aria-label="Copiar variáveis da paleta">Copiar</button>
+            </div>
+            <div class="code-output" id="palette-code" role="region" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       10. EXTRATOR DE CORES DE IMAGEM
+       O usuário carrega uma imagem e o sistema
+       usa Canvas API para extrair as cores dominantes.
+  ============================================= -->
+  <section class="section" id="extractor" aria-labelledby="extractor-title" style="background:rgba(255,255,255,0.02);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">// 10 — extração</span>
+        <h2 class="section-title" id="extractor-title">Extrair Cores de <span class="hl">Imagem</span></h2>
+        <p class="section-desc">Arraste ou selecione uma imagem para extrair suas cores dominantes automaticamente.</p>
+      </div>
+
+      <div class="gen-card">
+        <div class="card-header">
+          <span class="icon">🖼️</span>
+          <span class="card-name">color-extractor.js</span>
+        </div>
+        <div style="padding:24px; display:flex; flex-direction:column; gap:20px;">
+
+          <!-- Área de drop/upload de imagem -->
+          <div class="dropzone" id="dropzone"
+            role="region" aria-label="Área para arrastar ou selecionar imagem">
+            <!-- Input de arquivo real (invisível) -->
+            <input type="file" accept="image/*"
+              onchange="handleImageUpload(event)"
+              aria-label="Selecionar imagem para extração de cores" />
+            <div class="dropzone-icon" aria-hidden="true">📂</div>
+            <p class="dropzone-text">
+              <strong style="color:var(--text);">Arraste uma imagem aqui</strong><br>
+              ou clique para selecionar<br>
+              <small style="opacity:0.6;">PNG, JPG, GIF, WebP</small>
+            </p>
+          </div>
+
+          <!-- Preview da imagem carregada -->
+          <img id="img-preview" alt="Imagem carregada para extração de cores" />
+
+          <!-- Canvas oculto onde a imagem é processada -->
+          <!-- O Canvas permite ler os pixels e calcular as cores dominantes -->
+          <canvas id="color-canvas" style="display:none;" aria-hidden="true"></canvas>
+
+          <!-- Número de cores a extrair -->
+          <div class="ctrl-group" style="max-width:300px;">
+            <label class="ctrl-label" for="num-colors">
+              Número de cores
+              <span class="help-icon" tabindex="0">?
+                <span class="tooltip-text">Quantas cores dominantes o sistema deve identificar e extrair da imagem.</span>
+              </span>
+              <span class="ctrl-value" id="num-colors-val">8</span>
+            </label>
+            <input class="ctrl-range" type="range" id="num-colors"
+              min="3" max="16" value="8"
+              oninput="document.getElementById('num-colors-val').textContent = this.value; reExtractColors()"
+              aria-label="Quantidade de cores a extrair da imagem" />
+          </div>
+
+          <!-- Cores extraídas como swatches clicáveis -->
+          <div class="extracted-colors" id="extracted-colors"
+            role="list" aria-label="Cores extraídas da imagem">
+            <!-- Preenchido via JavaScript após o upload da imagem -->
+            <p style="color:var(--text-muted); font-size:0.9rem;">
+              Carregue uma imagem para extrair as cores.
+            </p>
+          </div>
+
+          <!-- Código CSS das cores extraídas -->
+          <div class="code-block" id="extracted-code-block" style="display:none;">
+            <div class="code-header">
+              <span class="code-label">Variáveis CSS Extraídas</span>
+              <button class="btn-copy" onclick="copyCode('extracted-code')" aria-label="Copiar cores extraídas como CSS">Copiar</button>
+            </div>
+            <div class="code-output" id="extracted-code" role="region" aria-live="polite"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       FOOTER
+  ============================================= -->
+  <footer role="contentinfo">
+    <p>
+      <strong>CtrlCSS</strong> — Projeto acadêmico desenvolvido para o 1º semestre de ADS.<br>
+      Feito com 💜 e muito <span style="color:var(--accent-cyan);">CSS</span>.
+    </p>
+  </footer>
+
+  <!-- =============================================
+       TOAST DE NOTIFICAÇÃO
+       Aparece brevemente ao copiar código.
+  ============================================= -->
+  <div class="toast" id="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    ✅ Copiado para a área de transferência!
+  </div>
+
+  <!-- =============================================
+       TOOLTIP GLOBAL DE AJUDA
+       Elemento ÚNICO reutilizado por todos os ícones "?" da
+       página. Em vez de cada ícone ter seu próprio tooltip
+       posicionado via CSS (frágil dentro de containers flex/grid
+       aninhados), existe apenas este elemento, que o JavaScript
+       reposiciona dinamicamente (position:fixed + coordenadas
+       reais da tela) sempre que o usuário passa o mouse ou foca
+       em algum ícone de ajuda. role="tooltip" e aria-hidden
+       controlados via JS mantêm a acessibilidade.
+  ============================================= -->
+  <div id="global-tooltip" role="tooltip" aria-hidden="true"></div>
+
+  <!-- =============================================
+       JAVASCRIPT — LÓGICA DOS GERADORES
+       Carregado no final do <body> para garantir que
+       todos os elementos do DOM já existam antes do
+       script ser executado e os event listeners serem ligados.
+  ============================================= -->
+  <script src="main.js"></script>
+</body>
+</html>

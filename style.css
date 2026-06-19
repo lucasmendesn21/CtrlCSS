@@ -1,0 +1,1168 @@
+/* =============================================
+   VARIÁVEIS GLOBAIS DE DESIGN
+   Centraliza todas as cores, fontes e tamanhos.
+   Facilita temas, manutenção e acessibilidade.
+============================================= */
+:root {
+  --bg:           #0D0D0D;   /* Fundo principal – asfalto noturno */
+  --surface:      #161622;   /* Superfície de cards */
+  --surface2:     #1E1E30;   /* Superfície secundária (inputs) */
+  --border:       #2A2A40;   /* Bordas sutis */
+
+  --accent-pink:  #FF3CAC;   /* Magenta neon – cor de destaque principal */
+  --accent-cyan:  #00F5FF;   /* Ciano spray – segundo destaque */
+  --accent-yellow:#FFE600;   /* Amarelo elétrico – terceiro destaque */
+  --accent-green: #39FF14;   /* Verde neon – usado em daltonismo seguro */
+
+  --text:         #F0F0F0;   /* Texto principal – quase branco */
+  --text-muted:   #8888A8;   /* Texto secundário */
+  --text-code:    #00F5FF;   /* Texto de código CSS */
+
+  --font-display: 'Bebas Neue', sans-serif;   /* Títulos em estilo grafite */
+  --font-body:    'Space Grotesk', sans-serif; /* Texto corrido legível */
+  --font-code:    'JetBrains Mono', monospace; /* Código CSS gerado */
+
+  --radius:       8px;    /* Borda arredondada padrão */
+  --radius-lg:    16px;   /* Borda arredondada grande */
+  --gap:          24px;   /* Espaçamento padrão entre elementos */
+  --transition:   0.25s ease; /* Duração de transições suaves */
+}
+
+/* =============================================
+   RESET E BASE GLOBAL
+   Remove margens/padding padrão do browser e
+   define comportamento de box-sizing consistente.
+============================================= */
+*, *::before, *::after {
+  box-sizing: border-box; /* Inclui padding/border no cálculo de largura */
+  margin: 0;
+  padding: 0;
+}
+
+/* Rolagem suave para âncoras internas */
+html { scroll-behavior: smooth; }
+
+/* Corpo principal: fundo escuro, fonte base, cor de texto */
+body {
+  background: var(--bg);
+  font-family: var(--font-body);
+  color: var(--text);
+  line-height: 1.6;
+  overflow-x: hidden; /* Evita scroll horizontal indesejado */
+}
+
+/* =============================================
+   ACESSIBILIDADE – REDUÇÃO DE MOVIMENTO
+   Respeita a preferência do sistema operacional
+   de usuários sensíveis a animações (ex: epilepsia).
+============================================= */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =============================================
+   ACESSIBILIDADE – FOCO VISÍVEL
+   Garante que usuários de teclado saibam qual
+   elemento está focado. Obrigatório para WCAG 2.1.
+============================================= */
+:focus-visible {
+  outline: 3px solid var(--accent-yellow);
+  outline-offset: 3px;
+}
+
+/* Remove outline padrão feio em cliques com mouse */
+:focus:not(:focus-visible) { outline: none; }
+
+/* =============================================
+   BARRA DE NAVEGAÇÃO
+   Fixa no topo, com blur para legibilidade.
+============================================= */
+.navbar {
+  position: fixed;         /* Sempre visível ao rolar */
+  top: 0; left: 0; right: 0;
+  z-index: 1000;           /* Acima de todos os outros elementos */
+  background: rgba(13, 13, 13, 0.85); /* Fundo semitransparente */
+  backdrop-filter: blur(16px);        /* Desfoque no conteúdo atrás */
+  border-bottom: 1px solid var(--border);
+  padding: 0 var(--gap);
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* Logo do site com gradiente de cor */
+.logo {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  letter-spacing: 2px;
+  background: linear-gradient(90deg, var(--accent-pink), var(--accent-cyan));
+  -webkit-background-clip: text;   /* Aplica gradiente só no texto (WebKit) */
+  background-clip: text;
+  -webkit-text-fill-color: transparent; /* Torna o preenchimento transparente */
+  white-space: nowrap;
+}
+
+/* Lista de links de navegação */
+.nav-links {
+  display: flex;
+  gap: 4px;
+  list-style: none;
+  flex-wrap: wrap; /* Quebra linha em telas pequenas */
+}
+
+/* Links individuais do menu */
+.nav-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  transition: color var(--transition), background var(--transition);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Hover/foco nos links do menu */
+.nav-links a:hover,
+.nav-links a:focus-visible {
+  color: var(--accent-cyan);
+  background: rgba(0, 245, 255, 0.08);
+}
+
+/* =============================================
+   MENU MOBILE (HAMBÚRGUER)
+   Em telas estreitas, o menu completo não cabe na
+   navbar e quebra o layout. A solução é esconder a
+   lista de links e mostrar um botão hambúrguer que
+   abre um painel dropdown abaixo da navbar.
+============================================= */
+
+/* Botão hambúrguer: oculto em telas largas (desktop) */
+.nav-toggle {
+  display: none;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius);
+  font-size: 1.2rem;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.nav-toggle:hover,
+.nav-toggle.active {
+  border-color: var(--accent-cyan);
+  color: var(--accent-cyan);
+}
+
+/* =============================================
+   HERO – SEÇÃO PRINCIPAL
+   Apresentação visual do site com efeito grafite.
+============================================= */
+.hero {
+  min-height: 100vh;                /* Ocupa toda a tela */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px var(--gap) var(--gap);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Grades de neon ao fundo – efeito perspectiva urbana */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(rgba(255,60,172,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,245,255,0.04) 1px, transparent 1px);
+  background-size: 60px 60px; /* Tamanho da grade */
+  pointer-events: none; /* Não interfere com cliques */
+}
+
+/* Brilho central atrás do título */
+.hero::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(255,60,172,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Título principal com efeito spray */
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(4rem, 12vw, 9rem); /* Fluido: menor em mobile, maior em desktop */
+  line-height: 0.9;
+  letter-spacing: 4px;
+  position: relative;
+  z-index: 1;
+  /* Efeito spray: sombra tripla com cores neon */
+  text-shadow:
+    0 0 30px rgba(255,60,172,0.6),
+    0 0 60px rgba(255,60,172,0.3),
+    4px 4px 0 rgba(0,245,255,0.3);
+}
+
+/* Parte colorida do título */
+.hero-title span {
+  background: linear-gradient(135deg, var(--accent-pink), var(--accent-cyan), var(--accent-yellow));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Subtítulo do hero */
+.hero-sub {
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  color: var(--text-muted);
+  max-width: 520px;
+  margin: 16px auto 32px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Botões da hero */
+.hero-btns {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+/* Botão primário com gradiente */
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-pink), #c026d3);
+  color: #fff;
+  border: none;
+  padding: 14px 32px;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform var(--transition), box-shadow var(--transition);
+  letter-spacing: 0.5px;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(255,60,172,0.4);
+}
+
+/* Botão secundário com borda */
+.btn-ghost {
+  background: transparent;
+  color: var(--accent-cyan);
+  border: 2px solid var(--accent-cyan);
+  padding: 12px 28px;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background var(--transition), color var(--transition);
+}
+
+.btn-ghost:hover {
+  background: rgba(0,245,255,0.1);
+}
+
+/* =============================================
+   LAYOUT PRINCIPAL
+   Container central limitado e com padding lateral.
+============================================= */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 var(--gap);
+}
+
+/* Seção genérica com padding vertical */
+.section {
+  padding: 80px 0;
+}
+
+/* =============================================
+   CABEÇALHO DE SEÇÃO
+   Estilo de "tag de grafite" com linha decorativa.
+============================================= */
+.section-header {
+  margin-bottom: 40px;
+}
+
+/* Etiqueta/tag acima do título */
+.section-tag {
+  display: inline-block;
+  font-family: var(--font-code);
+  font-size: 0.75rem;
+  color: var(--accent-yellow);
+  background: rgba(255,230,0,0.1);
+  border: 1px solid rgba(255,230,0,0.3);
+  padding: 4px 12px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Título de seção com fonte grafite */
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  letter-spacing: 2px;
+  line-height: 1;
+  color: var(--text);
+}
+
+/* Destaque colorido no título */
+.section-title .hl {
+  color: var(--accent-pink);
+}
+
+/* Descrição abaixo do título */
+.section-desc {
+  color: var(--text-muted);
+  margin-top: 8px;
+  font-size: 0.95rem;
+  max-width: 500px;
+}
+
+/* =============================================
+   CARD GERADOR
+   Card principal que contém controles + preview.
+============================================= */
+.gen-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  /* Borda neon sutil ao redor do card */
+  box-shadow: 0 0 0 1px rgba(255,60,172,0.1), 0 4px 24px rgba(0,0,0,0.4);
+}
+
+/* Cabeçalho do card com nome da seção */
+.card-header {
+  padding: 16px 24px;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-code);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Ícone colorido no cabeçalho do card */
+.card-header .icon {
+  font-size: 1.1rem;
+}
+
+/* Nome do gerador em destaque */
+.card-header .card-name {
+  color: var(--accent-cyan);
+  font-weight: 600;
+}
+
+/* Corpo do card dividido em dois painéis */
+.card-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Controles à esquerda, preview à direita */
+  gap: 0;
+}
+
+/* Painel de controles */
+.controls-panel {
+  padding: 24px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Painel de preview e código gerado */
+.preview-panel {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Responsividade: em mobile, empilha os painéis */
+@media (max-width: 768px) {
+  .card-body {
+    grid-template-columns: 1fr; /* Uma coluna em telas pequenas */
+  }
+  .controls-panel {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+}
+
+/* =============================================
+   CONTROLES DE INPUT
+   Estilos compartilhados por todos os inputs
+   do site (range, color, select, number).
+============================================= */
+
+/* Grupo de controle: label + input empilhados.
+   AJUSTE: position:relative adicionado para que o tooltip de
+   ajuda (.tooltip-text) se posicione relativo à largura REAL da
+   coluna/grupo, e não relativo ao ícone "?" isoladamente. */
+.ctrl-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Label do controle */
+.ctrl-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* =============================================
+   ÍCONE DE AJUDA (TOOLTIP)
+   Pequeno círculo com "?" ao lado do nome de cada
+   propriedade CSS. Ao passar o mouse (ou focar via
+   teclado), exibe uma explicação da função.
+
+   O tooltip é um único elemento fixo no <body>
+   (#global-tooltip), reposicionado via JavaScript a
+   cada hover/focus usando position:fixed e coordenadas
+   calculadas em relação à viewport real
+   (getBoundingClientRect).
+============================================= */
+
+/* Container do ícone: ainda precisa de position relative
+   apenas para fins de empilhamento visual. */
+.help-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-weight: 700;
+  font-style: normal;
+  text-transform: none;
+  letter-spacing: 0;
+  cursor: help;
+  flex-shrink: 0;
+}
+
+/* Destaque ao focar/passar o mouse no ícone */
+.help-icon:hover,
+.help-icon:focus-visible {
+  border-color: var(--accent-yellow);
+  color: var(--accent-yellow);
+}
+
+/* O texto original do tooltip (.tooltip-text) permanece dentro
+   do .help-icon no HTML apenas como FONTE do conteúdo (lido via
+   JS), mas fica sempre oculto — quem aparece de fato é o
+   #global-tooltip único, reposicionado dinamicamente. */
+.help-icon .tooltip-text {
+  display: none;
+}
+
+/* Tooltip global único: criado uma vez, reutilizado por todos
+   os ícones de ajuda da página. position:fixed = posicionado
+   relativo à JANELA, não a nenhum container. */
+#global-tooltip {
+  visibility: hidden;
+  opacity: 0;
+  position: fixed;
+  width: 200px;
+  max-width: calc(100vw - 24px); /* nunca ultrapassa a tela em mobile */
+  background: var(--bg);
+  border: 1px solid var(--accent-cyan);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 400;
+  line-height: 1.5;
+  padding: 8px 10px;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+  transition: opacity var(--transition);
+  z-index: 9998; /* abaixo apenas do toast (9999) */
+  pointer-events: none;
+}
+
+/* Estado visível, ativado via classe pelo JS */
+#global-tooltip.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Setinha do tooltip global, também reposicionada via JS
+   (variável CSS --arrow-left controla a posição horizontal) */
+#global-tooltip::after {
+  content: '';
+  position: absolute;
+  left: var(--arrow-left, 50%);
+  border-width: 6px;
+  border-style: solid;
+}
+/* Seta apontando para baixo (tooltip acima do ícone) */
+#global-tooltip.arrow-down::after {
+  top: 100%;
+  border-color: var(--accent-cyan) transparent transparent transparent;
+}
+/* Seta apontando para cima (tooltip abaixo do ícone, usado
+   quando não há espaço acima, ex.: primeira linha da página) */
+#global-tooltip.arrow-up::after {
+  bottom: 100%;
+  border-color: transparent transparent var(--accent-cyan) transparent;
+}
+
+/* Valor atual exibido ao lado da label */
+.ctrl-value {
+  color: var(--accent-cyan);
+  font-family: var(--font-code);
+  font-size: 0.8rem;
+  margin-left: auto; /* Empurra o valor para a direita mesmo com o help-icon presente */
+}
+
+/* Input de texto e número */
+.ctrl-input {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  padding: 8px 12px;
+  width: 100%;
+  transition: border-color var(--transition);
+}
+
+.ctrl-input:focus {
+  border-color: var(--accent-cyan);
+  outline: none;
+}
+
+/* Select customizado */
+.ctrl-select {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  padding: 8px 12px;
+  width: 100%;
+  cursor: pointer;
+  transition: border-color var(--transition);
+  appearance: none; /* Remove seta padrão do browser */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238888A8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+.ctrl-select:focus {
+  border-color: var(--accent-cyan);
+  outline: none;
+}
+
+/* Slider de range customizado */
+.ctrl-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--surface2);
+  outline: none;
+  cursor: pointer;
+}
+
+/* Trilha preenchida do slider */
+.ctrl-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent-pink);
+  cursor: pointer;
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 6px rgba(255,60,172,0.6); /* Brilho neon no thumb */
+  transition: transform var(--transition);
+}
+
+.ctrl-range::-webkit-slider-thumb:hover {
+  transform: scale(1.2); /* Cresce levemente no hover */
+}
+
+/* Firefox: thumb do range */
+.ctrl-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent-pink);
+  cursor: pointer;
+  border: 2px solid var(--bg);
+}
+
+/* Input de cor (color picker) */
+.ctrl-color {
+  width: 100%;
+  height: 40px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface2);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.ctrl-color::-webkit-color-swatch-wrapper { padding: 0; }
+.ctrl-color::-webkit-color-swatch {
+  border: none;
+  border-radius: 4px;
+}
+
+/* Linha com dois controles lado a lado */
+.ctrl-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+/* =============================================
+   PREVIEW BOX
+   Área de visualização do estilo gerado.
+============================================= */
+
+/* Container do preview com fundo quadriculado */
+.preview-box {
+  flex: 1;
+  min-height: 180px;
+  background:
+    repeating-conic-gradient(#1a1a2e 0% 25%, #12121e 0% 50%)
+    0 0 / 20px 20px; /* Grade quadriculada estilo Figma */
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Elemento alvo dentro do preview */
+.preview-target {
+  transition: all 0.3s ease; /* Transição suave ao mudar os controles */
+}
+
+/* =============================================
+   BLOCO DE CÓDIGO GERADO
+   Exibe o CSS resultante com syntax highlight simples.
+============================================= */
+
+/* Cabeçalho do bloco de código */
+.code-block {
+  background: #0a0a14;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+/* Barra de título do código */
+.code-header {
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Label "CSS gerado" */
+.code-label {
+  font-family: var(--font-code);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Botão de copiar o código */
+.btn-copy {
+  background: rgba(0,245,255,0.1);
+  border: 1px solid rgba(0,245,255,0.3);
+  color: var(--accent-cyan);
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-family: var(--font-code);
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: background var(--transition);
+  letter-spacing: 0.5px;
+}
+
+.btn-copy:hover { background: rgba(0,245,255,0.2); }
+
+/* Área de texto do código */
+.code-output {
+  padding: 16px;
+  font-family: var(--font-code);
+  font-size: 0.82rem;
+  color: var(--text-code);
+  line-height: 1.8;
+  white-space: pre-wrap;  /* Preserva quebras de linha e espaços */
+  word-break: break-all;  /* Evita overflow horizontal */
+  min-height: 60px;
+}
+
+/* =============================================
+   CHECKBOX E TOGGLE
+============================================= */
+.ctrl-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Esconde o checkbox nativo */
+.ctrl-checkbox input[type="checkbox"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface2);
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+/* Check customizado quando marcado */
+.ctrl-checkbox input[type="checkbox"]:checked {
+  background: var(--accent-pink);
+  border-color: var(--accent-pink);
+}
+
+/* Marca de verificação SVG inline */
+.ctrl-checkbox input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 3px; top: 1px;
+  width: 8px; height: 5px;
+  border-left: 2px solid white;
+  border-bottom: 2px solid white;
+  transform: rotate(-45deg);
+}
+
+/* =============================================
+   TABS – ABAS DE NAVEGAÇÃO INTERNA
+   Usadas para alternar entre sub-opções (ex: box-shadow/text-shadow).
+============================================= */
+.tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--surface2);
+  padding: 4px;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+}
+
+/* Botão de aba */
+.tab-btn {
+  flex: 1;
+  padding: 6px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+  text-align: center;
+}
+
+/* Aba ativa */
+.tab-btn.active {
+  background: var(--accent-pink);
+  color: #fff;
+}
+
+/* =============================================
+   SEÇÃO DE PALETA DE CORES
+   Sugestão de paleta a partir de uma cor primária.
+============================================= */
+
+/* Grid de swatches de cor */
+.palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+/* Swatch individual com nome da cor */
+.swatch {
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: transform var(--transition);
+}
+
+.swatch:hover { transform: scale(1.05); }
+
+/* Bloco de cor do swatch */
+.swatch-color {
+  height: 60px;
+  width: 100%;
+}
+
+/* Label com código HEX */
+.swatch-label {
+  padding: 6px;
+  font-family: var(--font-code);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  background: var(--surface2);
+  text-align: center;
+}
+
+/* =============================================
+   SEÇÃO DE EXTRAÇÃO DE CORES DE IMAGEM
+============================================= */
+
+/* Área de drop de imagem */
+.dropzone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+  position: relative;
+}
+
+/* Destaque quando arquivo está sobre a área */
+.dropzone.dragover,
+.dropzone:hover {
+  border-color: var(--accent-pink);
+  background: rgba(255,60,172,0.05);
+}
+
+/* Input de arquivo oculto */
+.dropzone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+/* Ícone e texto do dropzone */
+.dropzone-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.dropzone-text {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* Preview da imagem carregada */
+#img-preview {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: var(--radius);
+  display: none; /* Oculto até o usuário carregar uma imagem */
+  margin: 16px auto 0;
+}
+
+/* Grid de cores extraídas */
+.extracted-colors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+/* Cor extraída individual */
+.extracted-color {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: border-color var(--transition);
+}
+
+.extracted-color:hover { border-color: var(--accent-cyan); }
+
+/* Bolinha de cor */
+.color-dot {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Código HEX da cor extraída */
+.color-hex {
+  font-family: var(--font-code);
+  font-size: 0.8rem;
+  color: var(--text);
+}
+
+/* =============================================
+   TOAST – NOTIFICAÇÃO TEMPORÁRIA
+   Aparece ao copiar código.
+============================================= */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--accent-green);
+  color: #000;
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  font-weight: 700;
+  font-size: 0.85rem;
+  z-index: 9999;
+  transform: translateY(100px); /* Começa fora da tela */
+  transition: transform 0.3s ease;
+  pointer-events: none;
+}
+
+/* Toast visível */
+.toast.show { transform: translateY(0); }
+
+/* =============================================
+   MODO DALTÔNICO
+   Filtro CSS aplicado ao body que simula/ajuda
+   usuários com daltonismo. Usa SVG filter.
+============================================= */
+body.cb-mode {
+  filter: url(#colorblind-filter);
+}
+
+/* Botão de alternância do modo daltônico */
+.cb-toggle {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 6px 14px;
+  border-radius: var(--radius);
+  font-family: var(--font-code);
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: border-color var(--transition), color var(--transition);
+  white-space: nowrap;
+}
+
+.cb-toggle:hover,
+.cb-toggle.active {
+  border-color: var(--accent-yellow);
+  color: var(--accent-yellow);
+}
+
+/* =============================================
+   FILTRO SVG PARA DALTONISMO
+   Filtro de matriz de cores que simula
+   protanopia (dificuldade com vermelho/verde).
+   Fica oculto – só é referenciado via filter: url().
+============================================= */
+.svg-filters { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+/* =============================================
+   FOOTER
+============================================= */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 40px var(--gap);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+/* Destaque no rodapé */
+footer strong {
+  color: var(--accent-pink);
+}
+
+/* =============================================
+   ANIMAÇÕES CSS PRÉ-DEFINIDAS
+   Usadas pelo gerador de animação.
+============================================= */
+
+/* Pulsação: escala + opacidade */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.7; }
+}
+
+/* Quique: sobe e desce */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-30px); }
+}
+
+/* Rotação: giro completo */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Tremor lateral */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(6px); }
+}
+
+/* Aparecimento gradual */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* =============================================
+   SEÇÃO TRANSFORM
+   Estilos extras para o gerador de transform.
+============================================= */
+.transform-preview-inner {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, var(--accent-pink), var(--accent-cyan));
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: white;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+/* =============================================
+   SEÇÃO FILTROS CSS
+============================================= */
+.filter-preview-img {
+  max-width: 160px;
+  max-height: 160px;
+  border-radius: var(--radius);
+  transition: all 0.3s ease;
+  /* Imagem placeholder colorida */
+  background: linear-gradient(135deg, #ff3cac, #00f5ff, #ffe600);
+  width: 160px;
+  height: 100px;
+}
+
+/* =============================================
+   VARIÁVEIS CSS / CUSTOM PROPERTIES GERADOR
+============================================= */
+.vars-output {
+  background: #0a0a14;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  font-family: var(--font-code);
+  font-size: 0.8rem;
+  color: var(--text-code);
+  line-height: 1.8;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+/* =============================================
+   RESPONSIVIDADE DA NAVBAR (MOBILE)
+   Abaixo de 900px, a lista de links some e o
+   botão hambúrguer aparece. Ao clicar, o painel
+   de links abre como um dropdown abaixo da navbar.
+============================================= */
+@media (max-width: 900px) {
+  /* Mostra o botão hambúrguer */
+  .nav-toggle {
+    display: flex;
+  }
+
+  /* Esconde a lista de links por padrão em mobile */
+  .nav-links {
+    display: none;            /* Some do fluxo normal da navbar */
+    position: absolute;       /* Vira um painel flutuante */
+    top: 64px;                 /* Logo abaixo da navbar (altura fixa) */
+    left: 0;
+    right: 0;
+    flex-direction: column;   /* Links em coluna, um por linha */
+    gap: 4px;
+    background: rgba(13, 13, 13, 0.97); /* Fundo opaco para legibilidade */
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 12px var(--gap) 16px;
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;         /* Rola se houver muitos links */
+  }
+
+  /* Quando o menu está aberto (classe adicionada via JS) */
+  .nav-links.open {
+    display: flex;
+  }
+
+  /* Links ocupam a largura toda no menu mobile, facilitando o toque */
+  .nav-links a {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    text-align: left;
+  }
+}
